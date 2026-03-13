@@ -1,0 +1,338 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "azure": "https://schema.azure.com/monitor/",
+    "monitoring": "https://www.w3.org/ns/ssn/",
+    "sosa": "https://www.w3.org/ns/sosa/",
+    "dcterms": "http://purl.org/dc/terms/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+
+    "Metric": {
+      "@id": "azure:Metric",
+      "@context": {
+        "id": "@id",
+        "type": "@type",
+        "name": "schema:name",
+        "displayDescription": "schema:description",
+        "unit": {
+          "@id": "sosa:hasUnit",
+          "@type": "xsd:string"
+        },
+        "timeseries": {
+          "@id": "azure:timeseries",
+          "@container": "@list"
+        },
+        "timeStamp": {
+          "@id": "schema:dateCreated",
+          "@type": "xsd:dateTime"
+        },
+        "average": {
+          "@id": "azure:averageValue",
+          "@type": "xsd:double"
+        },
+        "minimum": {
+          "@id": "schema:minValue",
+          "@type": "xsd:double"
+        },
+        "maximum": {
+          "@id": "schema:maxValue",
+          "@type": "xsd:double"
+        },
+        "total": {
+          "@id": "azure:totalValue",
+          "@type": "xsd:double"
+        },
+        "count": {
+          "@id": "azure:sampleCount",
+          "@type": "xsd:double"
+        }
+      }
+    },
+
+    "MetricDefinition": {
+      "@id": "azure:MetricDefinition",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "displayDescription": "schema:description",
+        "namespace": "azure:metricNamespace",
+        "category": "schema:category",
+        "metricClass": "azure:metricClass",
+        "unit": {
+          "@id": "sosa:hasUnit",
+          "@type": "xsd:string"
+        },
+        "primaryAggregationType": "azure:primaryAggregationType",
+        "supportedAggregationTypes": {
+          "@id": "azure:supportedAggregationTypes",
+          "@container": "@set"
+        },
+        "metricAvailabilities": {
+          "@id": "azure:metricAvailabilities",
+          "@container": "@list"
+        },
+        "dimensions": {
+          "@id": "azure:dimensions",
+          "@container": "@list"
+        }
+      }
+    },
+
+    "AlertRule": {
+      "@id": "azure:AlertRule",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "description": "schema:description",
+        "isEnabled": {
+          "@id": "azure:isEnabled",
+          "@type": "xsd:boolean"
+        },
+        "condition": "azure:ruleCondition",
+        "actions": {
+          "@id": "schema:potentialAction",
+          "@container": "@list"
+        },
+        "lastUpdatedTime": {
+          "@id": "schema:dateModified",
+          "@type": "xsd:dateTime"
+        },
+        "location": "schema:location",
+        "tags": "schema:keywords"
+      }
+    },
+
+    "ScheduledQueryRule": {
+      "@id": "azure:ScheduledQueryRule",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "description": "schema:description",
+        "displayName": "schema:alternateName",
+        "enabled": {
+          "@id": "azure:isEnabled",
+          "@type": "xsd:boolean"
+        },
+        "severity": {
+          "@id": "azure:severity",
+          "@type": "xsd:integer"
+        },
+        "evaluationFrequency": {
+          "@id": "azure:evaluationFrequency",
+          "@type": "xsd:duration"
+        },
+        "windowSize": {
+          "@id": "azure:windowSize",
+          "@type": "xsd:duration"
+        },
+        "scopes": {
+          "@id": "azure:scopes",
+          "@container": "@set"
+        },
+        "criteria": "azure:scheduledQueryRuleCriteria",
+        "actions": {
+          "@id": "schema:potentialAction",
+          "@container": "@list"
+        },
+        "location": "schema:location"
+      }
+    },
+
+    "ActionGroup": {
+      "@id": "azure:ActionGroup",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "groupShortName": "schema:alternateName",
+        "enabled": {
+          "@id": "azure:isEnabled",
+          "@type": "xsd:boolean"
+        },
+        "emailReceivers": {
+          "@id": "azure:emailReceivers",
+          "@container": "@list"
+        },
+        "smsReceivers": {
+          "@id": "azure:smsReceivers",
+          "@container": "@list"
+        },
+        "webhookReceivers": {
+          "@id": "azure:webhookReceivers",
+          "@container": "@list"
+        },
+        "location": "schema:location",
+        "tags": "schema:keywords"
+      }
+    },
+
+    "AutoscaleSetting": {
+      "@id": "azure:AutoscaleSetting",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "enabled": {
+          "@id": "azure:isEnabled",
+          "@type": "xsd:boolean"
+        },
+        "targetResourceUri": {
+          "@id": "azure:targetResource",
+          "@type": "@id"
+        },
+        "targetResourceLocation": "schema:location",
+        "profiles": {
+          "@id": "azure:autoscaleProfiles",
+          "@container": "@list"
+        },
+        "notifications": {
+          "@id": "azure:notifications",
+          "@container": "@list"
+        },
+        "location": "schema:location",
+        "tags": "schema:keywords"
+      }
+    },
+
+    "LogQuery": {
+      "@id": "azure:LogQuery",
+      "@context": {
+        "query": {
+          "@id": "azure:kqlQuery",
+          "@type": "xsd:string"
+        },
+        "timespan": {
+          "@id": "azure:queryTimespan",
+          "@type": "xsd:duration"
+        },
+        "workspaces": {
+          "@id": "azure:targetWorkspaces",
+          "@container": "@set"
+        },
+        "tables": {
+          "@id": "azure:resultTables",
+          "@container": "@list"
+        }
+      }
+    },
+
+    "DiagnosticSetting": {
+      "@id": "azure:DiagnosticSetting",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "storageAccountId": {
+          "@id": "azure:storageDestination",
+          "@type": "@id"
+        },
+        "workspaceId": {
+          "@id": "azure:logAnalyticsDestination",
+          "@type": "@id"
+        },
+        "eventHubAuthorizationRuleId": {
+          "@id": "azure:eventHubDestination",
+          "@type": "@id"
+        },
+        "eventHubName": "azure:eventHubName",
+        "metrics": {
+          "@id": "azure:metricSettings",
+          "@container": "@list"
+        },
+        "logs": {
+          "@id": "azure:logSettings",
+          "@container": "@list"
+        }
+      }
+    },
+
+    "ActivityLogEvent": {
+      "@id": "azure:ActivityLogEvent",
+      "@context": {
+        "id": "@id",
+        "caller": "schema:agent",
+        "description": "schema:description",
+        "eventTimestamp": {
+          "@id": "schema:dateCreated",
+          "@type": "xsd:dateTime"
+        },
+        "level": "azure:eventLevel",
+        "operationName": "schema:name",
+        "resourceId": {
+          "@id": "azure:resourceId",
+          "@type": "@id"
+        },
+        "resourceGroupName": "azure:resourceGroup",
+        "status": "azure:operationStatus",
+        "subscriptionId": "azure:subscriptionId",
+        "correlationId": "azure:correlationId"
+      }
+    },
+
+    "DataCollectionRule": {
+      "@id": "azure:DataCollectionRule",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "description": "schema:description",
+        "dataCollectionEndpointId": {
+          "@id": "azure:dataCollectionEndpoint",
+          "@type": "@id"
+        },
+        "dataSources": "azure:dataSources",
+        "destinations": "azure:destinations",
+        "dataFlows": {
+          "@id": "azure:dataFlows",
+          "@container": "@list"
+        },
+        "location": "schema:location",
+        "tags": "schema:keywords"
+      }
+    },
+
+    "DataCollectionEndpoint": {
+      "@id": "azure:DataCollectionEndpoint",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "description": "schema:description",
+        "configurationAccess": "azure:configurationAccessEndpoint",
+        "logsIngestion": "azure:logsIngestionEndpoint",
+        "metricsIngestion": "azure:metricsIngestionEndpoint",
+        "networkAcls": "azure:networkAccessControl",
+        "location": "schema:location"
+      }
+    },
+
+    "PrivateLinkScope": {
+      "@id": "azure:PrivateLinkScope",
+      "@context": {
+        "id": "@id",
+        "name": "schema:name",
+        "accessModeSettings": "azure:accessModeSettings",
+        "privateEndpointConnections": {
+          "@id": "azure:privateEndpointConnections",
+          "@container": "@list"
+        },
+        "location": "schema:location",
+        "tags": "schema:keywords"
+      }
+    },
+
+    "ApplicationInsightsEvent": {
+      "@id": "azure:ApplicationInsightsEvent",
+      "@context": {
+        "id": "@id",
+        "type": "@type",
+        "timestamp": {
+          "@id": "schema:dateCreated",
+          "@type": "xsd:dateTime"
+        },
+        "customDimensions": "azure:customDimensions",
+        "customMeasurements": "azure:customMeasurements",
+        "operation": "azure:operation",
+        "session": "azure:session",
+        "user": "schema:agent",
+        "cloud": "azure:cloudContext"
+      }
+    }
+  }
+}

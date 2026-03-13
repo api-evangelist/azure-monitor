@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.azure.com/monitor/autoscale-setting.json",
+  "title": "Azure Monitor Autoscale Setting",
+  "description": "Represents an Azure Monitor autoscale setting that defines profiles, rules, and capacity limits for automatically scaling Azure resources.",
+  "type": "object",
+  "required": ["location", "properties"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource ID."
+    },
+    "name": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource name."
+    },
+    "type": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource type."
+    },
+    "location": {
+      "type": "string",
+      "description": "Resource location."
+    },
+    "tags": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "properties": {
+      "$ref": "#/$defs/AutoscaleSetting"
+    }
+  },
+  "$defs": {
+    "AutoscaleSetting": {
+      "type": "object",
+      "required": ["profiles"],
+      "properties": {
+        "profiles": {
+          "type": "array",
+          "maxItems": 20,
+          "items": { "$ref": "#/$defs/AutoscaleProfile" },
+          "description": "The collection of automatic scaling profiles (maximum 20)."
+        },
+        "notifications": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AutoscaleNotification" }
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "The enabled flag indicating if autoscale is active."
+        },
+        "predictiveAutoscalePolicy": {
+          "$ref": "#/$defs/PredictiveAutoscalePolicy"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the autoscale setting."
+        },
+        "targetResourceUri": {
+          "type": "string",
+          "description": "The resource identifier of the resource that the autoscale setting should be added to."
+        },
+        "targetResourceLocation": {
+          "type": "string",
+          "description": "The location of the resource that the autoscale setting should be added to."
+        }
+      }
+    },
+    "AutoscaleProfile": {
+      "type": "object",
+      "required": ["name", "capacity", "rules"],
+      "properties": {
+        "name": { "type": "string", "description": "The name of the profile." },
+        "capacity": { "$ref": "#/$defs/ScaleCapacity" },
+        "rules": {
+          "type": "array",
+          "maxItems": 10,
+          "items": { "$ref": "#/$defs/ScaleRule" }
+        },
+        "fixedDate": { "$ref": "#/$defs/TimeWindow" },
+        "recurrence": { "$ref": "#/$defs/Recurrence" }
+      }
+    },
+    "ScaleCapacity": {
+      "type": "object",
+      "required": ["minimum", "maximum", "default"],
+      "properties": {
+        "minimum": { "type": "string", "description": "The minimum number of instances." },
+        "maximum": { "type": "string", "description": "The maximum number of instances." },
+        "default": { "type": "string", "description": "The number of instances that will be set if metrics are not available for evaluation." }
+      }
+    },
+    "ScaleRule": {
+      "type": "object",
+      "required": ["metricTrigger", "scaleAction"],
+      "properties": {
+        "metricTrigger": { "$ref": "#/$defs/MetricTrigger" },
+        "scaleAction": { "$ref": "#/$defs/ScaleAction" }
+      }
+    },
+    "MetricTrigger": {
+      "type": "object",
+      "required": ["metricName", "metricResourceUri", "timeGrain", "statistic", "timeWindow", "timeAggregation", "operator", "threshold"],
+      "properties": {
+        "metricName": { "type": "string" },
+        "metricNamespace": { "type": "string" },
+        "metricResourceUri": { "type": "string" },
+        "metricResourceLocation": { "type": "string" },
+        "timeGrain": { "type": "string" },
+        "statistic": { "type": "string", "enum": ["Average", "Min", "Max", "Sum"] },
+        "timeWindow": { "type": "string" },
+        "timeAggregation": { "type": "string", "enum": ["Average", "Minimum", "Maximum", "Total", "Count", "Last"] },
+        "operator": { "type": "string", "enum": ["Equals", "NotEquals", "GreaterThan", "GreaterThanOrEqual", "LessThan", "LessThanOrEqual"] },
+        "threshold": { "type": "number" },
+        "dividePerInstance": { "type": "boolean" }
+      }
+    },
+    "ScaleAction": {
+      "type": "object",
+      "required": ["direction", "type", "cooldown"],
+      "properties": {
+        "direction": { "type": "string", "enum": ["None", "Increase", "Decrease"] },
+        "type": { "type": "string", "enum": ["ChangeCount", "PercentChangeCount", "ExactCount", "ServiceAllowedNextValue"] },
+        "value": { "type": "string", "default": "1" },
+        "cooldown": { "type": "string", "description": "The amount of time to wait since the last scaling action in ISO 8601 duration format." }
+      }
+    },
+    "TimeWindow": {
+      "type": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "timeZone": { "type": "string" },
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Recurrence": {
+      "type": "object",
+      "required": ["frequency", "schedule"],
+      "properties": {
+        "frequency": { "type": "string", "enum": ["None", "Second", "Minute", "Hour", "Day", "Week", "Month", "Year"] },
+        "schedule": { "$ref": "#/$defs/RecurrentSchedule" }
+      }
+    },
+    "RecurrentSchedule": {
+      "type": "object",
+      "required": ["timeZone", "days", "hours", "minutes"],
+      "properties": {
+        "timeZone": { "type": "string" },
+        "days": { "type": "array", "items": { "type": "string" } },
+        "hours": { "type": "array", "items": { "type": "integer" } },
+        "minutes": { "type": "array", "items": { "type": "integer" } }
+      }
+    },
+    "AutoscaleNotification": {
+      "type": "object",
+      "required": ["operation"],
+      "properties": {
+        "operation": { "type": "string", "enum": ["Scale"] },
+        "email": {
+          "type": "object",
+          "properties": {
+            "sendToSubscriptionAdministrator": { "type": "boolean" },
+            "sendToSubscriptionCoAdministrators": { "type": "boolean" },
+            "customEmails": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "webhooks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "serviceUri": { "type": "string", "format": "uri" },
+              "properties": { "type": "object", "additionalProperties": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "PredictiveAutoscalePolicy": {
+      "type": "object",
+      "required": ["scaleMode"],
+      "properties": {
+        "scaleMode": { "type": "string", "enum": ["Disabled", "ForecastOnly", "Enabled"] },
+        "scaleLookAheadTime": { "type": "string" }
+      }
+    }
+  }
+}

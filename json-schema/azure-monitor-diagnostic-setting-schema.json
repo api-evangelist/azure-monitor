@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.azure.com/monitor/diagnostic-setting.json",
+  "title": "Azure Monitor Diagnostic Setting",
+  "description": "Represents a diagnostic setting that configures how platform logs and metrics from Azure resources are routed to destinations such as Log Analytics workspaces, Storage Accounts, and Event Hubs.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Fully qualified resource ID."
+    },
+    "name": {
+      "type": "string",
+      "readOnly": true,
+      "description": "The name of the resource."
+    },
+    "type": {
+      "type": "string",
+      "readOnly": true,
+      "description": "The type of the resource."
+    },
+    "properties": {
+      "$ref": "#/$defs/DiagnosticSettings"
+    }
+  },
+  "$defs": {
+    "DiagnosticSettings": {
+      "type": "object",
+      "properties": {
+        "storageAccountId": {
+          "type": "string",
+          "description": "The resource ID of the storage account to which you would like to send Diagnostic Logs."
+        },
+        "serviceBusRuleId": {
+          "type": "string",
+          "description": "The service bus rule ID of the diagnostic setting. This is here to maintain backwards compatibility."
+        },
+        "eventHubAuthorizationRuleId": {
+          "type": "string",
+          "description": "The resource ID of the Event Hub authorization rule."
+        },
+        "eventHubName": {
+          "type": "string",
+          "description": "The name of the Event Hub. If none is specified, the default Event Hub will be selected."
+        },
+        "metrics": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/MetricSettings" },
+          "description": "The list of metric settings."
+        },
+        "logs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LogSettings" },
+          "description": "The list of logs settings."
+        },
+        "workspaceId": {
+          "type": "string",
+          "description": "The full ARM resource ID of the Log Analytics workspace to which you would like to send Diagnostic Logs."
+        },
+        "marketplacePartnerId": {
+          "type": "string",
+          "description": "The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic Logs."
+        },
+        "logAnalyticsDestinationType": {
+          "type": "string",
+          "description": "A string indicating whether the export to Log Analytics should use the default destination type or use resource-specific (Dedicated)."
+        }
+      }
+    },
+    "MetricSettings": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "timeGrain": {
+          "type": "string",
+          "description": "The timegrain of the metric in ISO 8601 format."
+        },
+        "category": {
+          "type": "string",
+          "description": "Name of a Diagnostic Metric category for a resource type."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "A value indicating whether this category is enabled."
+        },
+        "retentionPolicy": { "$ref": "#/$defs/RetentionPolicy" }
+      }
+    },
+    "LogSettings": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Name of a Diagnostic Log category for a resource type."
+        },
+        "categoryGroup": {
+          "type": "string",
+          "description": "Name of a Diagnostic Log category group for a resource type."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "A value indicating whether this log is enabled."
+        },
+        "retentionPolicy": { "$ref": "#/$defs/RetentionPolicy" }
+      }
+    },
+    "RetentionPolicy": {
+      "type": "object",
+      "required": ["enabled", "days"],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "A value indicating whether the retention policy is enabled."
+        },
+        "days": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "The number of days for the retention in days. A value of 0 will retain the events indefinitely."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.azure.com/monitor/metric-definition.json",
+  "title": "Azure Monitor Metric Definition",
+  "description": "Represents a metric definition describing a metric that is available for an Azure resource, including its name, unit, available aggregation types, and time granularities.",
+  "type": "object",
+  "properties": {
+    "isDimensionRequired": {
+      "type": "boolean",
+      "description": "Flag to indicate whether the dimension is required."
+    },
+    "resourceId": {
+      "type": "string",
+      "description": "The resource identifier of the resource that emitted the metric."
+    },
+    "namespace": {
+      "type": "string",
+      "description": "The namespace the metric belongs to."
+    },
+    "name": {
+      "$ref": "#/$defs/LocalizableString",
+      "description": "The name information for the metric."
+    },
+    "displayDescription": {
+      "type": "string",
+      "description": "Detailed description of this metric."
+    },
+    "category": {
+      "type": "string",
+      "description": "Custom category name for this metric."
+    },
+    "metricClass": {
+      "type": "string",
+      "enum": ["Availability", "Transactions", "Errors", "Latency", "Saturation"],
+      "description": "The class of the metric."
+    },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "Count", "Bytes", "Seconds", "CountPerSecond", "BytesPerSecond",
+        "Percent", "MilliSeconds", "ByteSeconds", "Unspecified",
+        "Cores", "MilliCores", "NanoCores", "BitsPerSecond"
+      ],
+      "description": "The unit of the metric."
+    },
+    "primaryAggregationType": {
+      "type": "string",
+      "enum": ["None", "Average", "Count", "Minimum", "Maximum", "Total"],
+      "description": "The primary aggregation type value defining how to use the values for display."
+    },
+    "supportedAggregationTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["None", "Average", "Count", "Minimum", "Maximum", "Total"]
+      },
+      "description": "The collection of what aggregation types are supported."
+    },
+    "metricAvailabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MetricAvailability"
+      },
+      "description": "The collection of what aggregation intervals are available to be queried."
+    },
+    "id": {
+      "type": "string",
+      "description": "The resource identifier of the metric definition."
+    },
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/LocalizableString"
+      },
+      "description": "The available dimensions for this metric."
+    }
+  },
+  "$defs": {
+    "LocalizableString": {
+      "type": "object",
+      "required": ["value"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The invariant value."
+        },
+        "localizedValue": {
+          "type": "string",
+          "description": "The locale-specific display name."
+        }
+      }
+    },
+    "MetricAvailability": {
+      "type": "object",
+      "properties": {
+        "timeGrain": {
+          "type": "string",
+          "description": "The time grain specifies the aggregation interval for the metric in ISO 8601 duration format."
+        },
+        "retention": {
+          "type": "string",
+          "description": "The retention period for the metric at the specified time grain in ISO 8601 duration format."
+        }
+      }
+    }
+  }
+}

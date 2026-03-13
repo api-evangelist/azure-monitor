@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.azure.com/monitor/alert-rule.json",
+  "title": "Azure Monitor Alert Rule",
+  "description": "Represents an Azure Monitor alert rule resource that defines conditions for triggering alerts and the actions to take when conditions are met.",
+  "type": "object",
+  "required": ["location", "properties"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource ID."
+    },
+    "name": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource name."
+    },
+    "type": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource type."
+    },
+    "location": {
+      "type": "string",
+      "description": "Resource location."
+    },
+    "tags": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Resource tags."
+    },
+    "properties": {
+      "$ref": "#/$defs/AlertRule"
+    }
+  },
+  "$defs": {
+    "AlertRule": {
+      "type": "object",
+      "required": ["name", "isEnabled", "condition"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the alert rule."
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of the alert rule that is included in the alert email."
+        },
+        "provisioningState": {
+          "type": "string",
+          "description": "The provisioning state."
+        },
+        "isEnabled": {
+          "type": "boolean",
+          "description": "The flag that indicates whether the alert rule is enabled."
+        },
+        "condition": {
+          "$ref": "#/$defs/RuleCondition",
+          "description": "The condition that results in the alert rule being activated."
+        },
+        "lastUpdatedTime": {
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "description": "Last time the rule was updated in ISO 8601 format."
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RuleAction"
+          },
+          "description": "The array of actions that are performed when the alert rule becomes active and when an alert condition is resolved."
+        }
+      }
+    },
+    "RuleCondition": {
+      "type": "object",
+      "required": ["odata.type"],
+      "properties": {
+        "odata.type": {
+          "type": "string",
+          "description": "Specifies the type of condition, e.g., ThresholdRuleCondition, LocationThresholdRuleCondition, ManagementEventRuleCondition."
+        },
+        "dataSource": {
+          "$ref": "#/$defs/RuleDataSource"
+        }
+      }
+    },
+    "RuleDataSource": {
+      "type": "object",
+      "required": ["odata.type"],
+      "properties": {
+        "odata.type": {
+          "type": "string",
+          "description": "Specifies the type of data source, e.g., RuleMetricDataSource, RuleManagementEventDataSource."
+        },
+        "resourceUri": {
+          "type": "string",
+          "description": "The resource identifier of the resource the rule monitors."
+        },
+        "legacyResourceId": {
+          "type": "string",
+          "description": "The legacy resource identifier."
+        },
+        "resourceLocation": {
+          "type": "string",
+          "description": "The location of the resource."
+        },
+        "metricNamespace": {
+          "type": "string",
+          "description": "The namespace of the metric."
+        }
+      }
+    },
+    "RuleAction": {
+      "type": "object",
+      "required": ["odata.type"],
+      "properties": {
+        "odata.type": {
+          "type": "string",
+          "description": "Specifies the type of the action, e.g., RuleEmailAction, RuleWebhookAction."
+        }
+      }
+    }
+  }
+}

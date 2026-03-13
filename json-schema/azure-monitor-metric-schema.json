@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.azure.com/monitor/metric.json",
+  "title": "Azure Monitor Metric",
+  "description": "Represents a metric value returned by the Azure Monitor Metrics API, containing time series data with aggregated values over specified intervals.",
+  "type": "object",
+  "required": ["id", "type", "name", "unit", "timeseries"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The metric ID, typically in the format of a fully qualified Azure resource ID with metric name."
+    },
+    "type": {
+      "type": "string",
+      "description": "The resource type of the metric resource, typically Microsoft.Insights/metrics."
+    },
+    "name": {
+      "$ref": "#/$defs/LocalizableString",
+      "description": "The name of the metric."
+    },
+    "displayDescription": {
+      "type": "string",
+      "description": "Detailed description of this metric."
+    },
+    "errorCode": {
+      "type": "string",
+      "description": "Error code encountered while querying this specific metric."
+    },
+    "errorMessage": {
+      "type": "string",
+      "description": "Error message encountered while querying this specific metric."
+    },
+    "unit": {
+      "$ref": "#/$defs/MetricUnit",
+      "description": "The unit of the metric."
+    },
+    "timeseries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TimeSeriesElement"
+      },
+      "description": "The time series returned when a data query is performed."
+    }
+  },
+  "$defs": {
+    "LocalizableString": {
+      "type": "object",
+      "required": ["value"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The invariant value."
+        },
+        "localizedValue": {
+          "type": "string",
+          "description": "The locale-specific display name."
+        }
+      }
+    },
+    "MetricUnit": {
+      "type": "string",
+      "enum": [
+        "Count",
+        "Bytes",
+        "Seconds",
+        "CountPerSecond",
+        "BytesPerSecond",
+        "Percent",
+        "MilliSeconds",
+        "ByteSeconds",
+        "Unspecified",
+        "Cores",
+        "MilliCores",
+        "NanoCores",
+        "BitsPerSecond"
+      ],
+      "description": "The unit of the metric."
+    },
+    "TimeSeriesElement": {
+      "type": "object",
+      "properties": {
+        "metadatavalues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MetadataValue"
+          },
+          "description": "The metadata values returned if a metadata filter was specified."
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MetricValue"
+          },
+          "description": "An array of data points representing the metric values."
+        }
+      }
+    },
+    "MetadataValue": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/LocalizableString"
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the metadata."
+        }
+      }
+    },
+    "MetricValue": {
+      "type": "object",
+      "required": ["timeStamp"],
+      "properties": {
+        "timeStamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp for the metric value in ISO 8601 format."
+        },
+        "average": {
+          "type": "number",
+          "description": "The average value in the time range."
+        },
+        "minimum": {
+          "type": "number",
+          "description": "The least value in the time range."
+        },
+        "maximum": {
+          "type": "number",
+          "description": "The greatest value in the time range."
+        },
+        "total": {
+          "type": "number",
+          "description": "The sum of all of the values in the time range."
+        },
+        "count": {
+          "type": "number",
+          "description": "The number of samples in the time range."
+        }
+      }
+    }
+  }
+}

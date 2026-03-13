@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.azure.com/monitor/action-group.json",
+  "title": "Azure Monitor Action Group",
+  "description": "Represents an Azure Monitor action group that defines notification and automation actions triggered by alerts, including email, SMS, webhooks, Azure Functions, Logic Apps, and more.",
+  "type": "object",
+  "required": ["location"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource ID."
+    },
+    "name": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource name."
+    },
+    "type": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Azure resource type."
+    },
+    "location": {
+      "type": "string",
+      "description": "Resource location."
+    },
+    "tags": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Resource tags."
+    },
+    "properties": {
+      "$ref": "#/$defs/ActionGroup"
+    }
+  },
+  "$defs": {
+    "ActionGroup": {
+      "type": "object",
+      "required": ["groupShortName", "enabled"],
+      "properties": {
+        "groupShortName": {
+          "type": "string",
+          "maxLength": 12,
+          "description": "The short name of the action group (maximum 12 characters)."
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Indicates whether this action group is enabled."
+        },
+        "emailReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EmailReceiver" },
+          "description": "The list of email receivers."
+        },
+        "smsReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/SmsReceiver" },
+          "description": "The list of SMS receivers."
+        },
+        "webhookReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/WebhookReceiver" },
+          "description": "The list of webhook receivers."
+        },
+        "itsmReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ItsmReceiver" },
+          "description": "The list of ITSM receivers."
+        },
+        "azureAppPushReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AzureAppPushReceiver" },
+          "description": "The list of Azure App Push receivers."
+        },
+        "automationRunbookReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AutomationRunbookReceiver" },
+          "description": "The list of Automation Runbook receivers."
+        },
+        "voiceReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/VoiceReceiver" },
+          "description": "The list of voice receivers."
+        },
+        "logicAppReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LogicAppReceiver" },
+          "description": "The list of Logic App receivers."
+        },
+        "azureFunctionReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AzureFunctionReceiver" },
+          "description": "The list of Azure Function receivers."
+        },
+        "armRoleReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ArmRoleReceiver" },
+          "description": "The list of ARM role receivers."
+        },
+        "eventHubReceivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EventHubReceiver" },
+          "description": "The list of Event Hub receivers."
+        }
+      }
+    },
+    "EmailReceiver": {
+      "type": "object",
+      "required": ["name", "emailAddress"],
+      "properties": {
+        "name": { "type": "string", "description": "The name of the email receiver." },
+        "emailAddress": { "type": "string", "format": "email", "description": "The email address." },
+        "useCommonAlertSchema": { "type": "boolean", "default": false },
+        "status": { "type": "string", "enum": ["NotSpecified", "Enabled", "Disabled"], "readOnly": true }
+      }
+    },
+    "SmsReceiver": {
+      "type": "object",
+      "required": ["name", "countryCode", "phoneNumber"],
+      "properties": {
+        "name": { "type": "string" },
+        "countryCode": { "type": "string" },
+        "phoneNumber": { "type": "string" },
+        "status": { "type": "string", "enum": ["NotSpecified", "Enabled", "Disabled"], "readOnly": true }
+      }
+    },
+    "WebhookReceiver": {
+      "type": "object",
+      "required": ["name", "serviceUri"],
+      "properties": {
+        "name": { "type": "string" },
+        "serviceUri": { "type": "string", "format": "uri" },
+        "useCommonAlertSchema": { "type": "boolean", "default": false },
+        "useAadAuth": { "type": "boolean", "default": false },
+        "objectId": { "type": "string" },
+        "identifierUri": { "type": "string" },
+        "tenantId": { "type": "string" }
+      }
+    },
+    "ItsmReceiver": {
+      "type": "object",
+      "required": ["name", "workspaceId", "connectionId", "ticketConfiguration", "region"],
+      "properties": {
+        "name": { "type": "string" },
+        "workspaceId": { "type": "string" },
+        "connectionId": { "type": "string" },
+        "ticketConfiguration": { "type": "string" },
+        "region": { "type": "string" }
+      }
+    },
+    "AzureAppPushReceiver": {
+      "type": "object",
+      "required": ["name", "emailAddress"],
+      "properties": {
+        "name": { "type": "string" },
+        "emailAddress": { "type": "string", "format": "email" }
+      }
+    },
+    "AutomationRunbookReceiver": {
+      "type": "object",
+      "required": ["automationAccountId", "runbookName", "webhookResourceId", "isGlobalRunbook"],
+      "properties": {
+        "automationAccountId": { "type": "string" },
+        "runbookName": { "type": "string" },
+        "webhookResourceId": { "type": "string" },
+        "isGlobalRunbook": { "type": "boolean" },
+        "name": { "type": "string" },
+        "serviceUri": { "type": "string", "format": "uri" },
+        "useCommonAlertSchema": { "type": "boolean", "default": false }
+      }
+    },
+    "VoiceReceiver": {
+      "type": "object",
+      "required": ["name", "countryCode", "phoneNumber"],
+      "properties": {
+        "name": { "type": "string" },
+        "countryCode": { "type": "string" },
+        "phoneNumber": { "type": "string" }
+      }
+    },
+    "LogicAppReceiver": {
+      "type": "object",
+      "required": ["name", "resourceId", "callbackUrl"],
+      "properties": {
+        "name": { "type": "string" },
+        "resourceId": { "type": "string" },
+        "callbackUrl": { "type": "string", "format": "uri" },
+        "useCommonAlertSchema": { "type": "boolean", "default": false }
+      }
+    },
+    "AzureFunctionReceiver": {
+      "type": "object",
+      "required": ["name", "functionAppResourceId", "functionName", "httpTriggerUrl"],
+      "properties": {
+        "name": { "type": "string" },
+        "functionAppResourceId": { "type": "string" },
+        "functionName": { "type": "string" },
+        "httpTriggerUrl": { "type": "string", "format": "uri" },
+        "useCommonAlertSchema": { "type": "boolean", "default": false }
+      }
+    },
+    "ArmRoleReceiver": {
+      "type": "object",
+      "required": ["name", "roleId"],
+      "properties": {
+        "name": { "type": "string" },
+        "roleId": { "type": "string" },
+        "useCommonAlertSchema": { "type": "boolean", "default": false }
+      }
+    },
+    "EventHubReceiver": {
+      "type": "object",
+      "required": ["name", "eventHubNameSpace", "eventHubName", "subscriptionId"],
+      "properties": {
+        "name": { "type": "string" },
+        "eventHubNameSpace": { "type": "string" },
+        "eventHubName": { "type": "string" },
+        "subscriptionId": { "type": "string" },
+        "tenantId": { "type": "string" },
+        "useCommonAlertSchema": { "type": "boolean", "default": false }
+      }
+    }
+  }
+}

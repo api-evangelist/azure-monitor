@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.azure.com/monitor/log-query.json",
+  "title": "Azure Monitor Log Query",
+  "description": "Represents a query request and response for the Azure Monitor Logs API and Application Insights query API, using Kusto Query Language (KQL).",
+  "type": "object",
+  "properties": {
+    "request": {
+      "$ref": "#/$defs/QueryBody"
+    },
+    "response": {
+      "$ref": "#/$defs/QueryResults"
+    }
+  },
+  "$defs": {
+    "QueryBody": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The Analytics query in Kusto Query Language (KQL) format."
+        },
+        "timespan": {
+          "type": "string",
+          "description": "The timespan over which to query data in ISO 8601 duration format (e.g., PT1H, P1D, P1DT12H)."
+        },
+        "workspaces": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "A list of workspace IDs to include in cross-workspace queries."
+        },
+        "applications": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "A list of Application Insights app IDs for cross-application queries."
+        }
+      }
+    },
+    "QueryResults": {
+      "type": "object",
+      "required": ["tables"],
+      "properties": {
+        "tables": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Table" },
+          "description": "The list of tables, columns, and rows."
+        }
+      }
+    },
+    "Table": {
+      "type": "object",
+      "required": ["name", "columns", "rows"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the table."
+        },
+        "columns": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Column" },
+          "description": "The list of columns in this table."
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {}
+          },
+          "description": "The resulting rows from this query. Each row is an array of values corresponding to the columns."
+        }
+      }
+    },
+    "Column": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of this column."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["bool", "datetime", "dynamic", "int", "long", "real", "string", "guid", "decimal", "timespan"],
+          "description": "The data type of this column."
+        }
+      }
+    }
+  }
+}

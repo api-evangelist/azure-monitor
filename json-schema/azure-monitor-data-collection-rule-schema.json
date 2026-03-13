@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.azure.com/monitor/data-collection-rule.json",
+  "title": "Azure Monitor Data Collection Rule",
+  "description": "Represents an Azure Monitor data collection rule that defines data sources, transformations, and destinations for collecting monitoring data.",
+  "type": "object",
+  "required": ["location"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Fully qualified resource ID."
+    },
+    "name": {
+      "type": "string",
+      "readOnly": true,
+      "description": "The name of the resource."
+    },
+    "type": {
+      "type": "string",
+      "readOnly": true,
+      "description": "The type of the resource."
+    },
+    "location": {
+      "type": "string",
+      "description": "The geo-location where the resource lives."
+    },
+    "tags": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["Linux", "Windows"],
+      "description": "The kind of the resource."
+    },
+    "properties": {
+      "$ref": "#/$defs/DataCollectionRule"
+    }
+  },
+  "$defs": {
+    "DataCollectionRule": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Description of the data collection rule."
+        },
+        "immutableId": {
+          "type": "string",
+          "readOnly": true,
+          "description": "The immutable ID of this data collection rule."
+        },
+        "dataCollectionEndpointId": {
+          "type": "string",
+          "description": "The resource ID of the data collection endpoint."
+        },
+        "streamDeclarations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string", "enum": ["string", "int", "long", "real", "boolean", "datetime", "dynamic"] }
+                  }
+                }
+              }
+            }
+          },
+          "description": "Declaration of custom streams used in this rule."
+        },
+        "dataSources": {
+          "$ref": "#/$defs/DataSources"
+        },
+        "destinations": {
+          "$ref": "#/$defs/Destinations"
+        },
+        "dataFlows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/DataFlow" },
+          "description": "The specification of data flows."
+        },
+        "provisioningState": {
+          "type": "string",
+          "readOnly": true,
+          "enum": ["Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed"]
+        }
+      }
+    },
+    "DataSources": {
+      "type": "object",
+      "properties": {
+        "performanceCounters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "streams": { "type": "array", "items": { "type": "string" } },
+              "samplingFrequencyInSeconds": { "type": "integer" },
+              "counterSpecifiers": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "windowsEventLogs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "streams": { "type": "array", "items": { "type": "string" } },
+              "xPathQueries": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "syslog": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "streams": { "type": "array", "items": { "type": "string" } },
+              "facilityNames": { "type": "array", "items": { "type": "string" } },
+              "logLevels": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "streams": { "type": "array", "items": { "type": "string" } },
+              "extensionName": { "type": "string" },
+              "extensionSettings": { "type": "object", "additionalProperties": true },
+              "inputDataSources": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "Destinations": {
+      "type": "object",
+      "properties": {
+        "logAnalytics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "workspaceResourceId": { "type": "string" },
+              "workspaceId": { "type": "string", "readOnly": true },
+              "name": { "type": "string" }
+            }
+          }
+        },
+        "azureMonitorMetrics": {
+          "type": "object",
+          "properties": { "name": { "type": "string" } }
+        },
+        "eventHubs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "eventHubResourceId": { "type": "string" },
+              "name": { "type": "string" }
+            }
+          }
+        },
+        "storageBlobsDirect": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "storageAccountResourceId": { "type": "string" },
+              "containerName": { "type": "string" },
+              "name": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "DataFlow": {
+      "type": "object",
+      "properties": {
+        "streams": { "type": "array", "items": { "type": "string" } },
+        "destinations": { "type": "array", "items": { "type": "string" } },
+        "transformKql": { "type": "string", "description": "The KQL query to transform stream data." },
+        "outputStream": { "type": "string" },
+        "builtInTransform": { "type": "string" }
+      }
+    }
+  }
+}
